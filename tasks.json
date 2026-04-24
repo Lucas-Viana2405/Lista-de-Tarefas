@@ -1,0 +1,25 @@
+{
+  "next_id": 5,
+  "tasks": [
+    {
+      "id": 1,
+      "text": "procurar vaga de emprego",
+      "done": true
+    },
+    {
+      "id": 2,
+      "text": "tomar banho",
+      "done": true
+    },
+    {
+      "id": 3,
+      "text": "lavar o banheiro",
+      "done": true
+    },
+    {
+      "id": 4,
+      "text": "lavar o banheiro",
+      "done": true
+    }
+  ]
+}
