@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Tarefas</title>
+    <style>
+        :root {
+            --bg-1: #070b1a;
+            --bg-2: #120a2b;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-strong: rgba(255, 255, 255, 0.14);
+            --text: #f8fafc;
+            --muted: #bfdbfe;
+            --primary: #22d3ee;
+            --secondary: #a78bfa;
+            --accent: #f472b6;
+            --success: #34d399;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(34, 211, 238, 0.25), transparent 35%),
+                radial-gradient(circle at 85% 15%, rgba(167, 139, 250, 0.28), transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(244, 114, 182, 0.18), transparent 35%),
+                linear-gradient(135deg, var(--bg-1), var(--bg-2));
+            color: var(--text);
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 16px;
+            overflow-x: hidden;
+        }
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            border-radius: 999px;
+            filter: blur(48px);
+            z-index: 0;
+            pointer-events: none;
+            animation: float 8s ease-in-out infinite alternate;
+        }
+        body::before {
+            width: 260px;
+            height: 260px;
+            background: rgba(34, 211, 238, 0.25);
+            top: 8%;
+            left: -80px;
+        }
+        body::after {
+            width: 300px;
+            height: 300px;
+            background: rgba(244, 114, 182, 0.22);
+            right: -90px;
+            bottom: 10%;
+            animation-delay: 0.8s;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 760px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(14px);
+            border-radius: 22px;
+            box-shadow:
+                0 30px 60px rgba(2, 6, 23, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            padding: 30px;
+        }
+        h1 {
+            margin: 0 0 6px;
+            font-size: 2rem;
+            letter-spacing: 0.4px;
+            text-shadow: 0 0 18px rgba(34, 211, 238, 0.45);
+        }
+        .subtitle {
+            margin: 0 0 22px;
+            color: var(--muted);
+        }
+        .add-form {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .add-form input[type="text"] {
+            flex: 1;
+            padding: 11px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.28);
+            background: rgba(15, 23, 42, 0.45);
+            color: var(--text);
+            border-radius: 10px;
+            font-size: 0.98rem;
+            outline: none;
+        }
+        .add-form input[type="text"]::placeholder {
+            color: #cbd5e1;
+        }
+        .add-form input[type="text"]:focus {
+            border-color: rgba(34, 211, 238, 0.75);
+            box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.2);
+        }
+        button {
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+        }
+        button:hover {
+            transform: translateY(-1px);
+        }
+        .btn-primary {
+            color: #05202a;
+            background: linear-gradient(120deg, var(--primary), #67e8f9);
+            box-shadow: 0 0 20px rgba(34, 211, 238, 0.35);
+        }
+        .btn-primary:hover {
+            opacity: 0.95;
+        }
+        .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .task-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: linear-gradient(110deg, rgba(15, 23, 42, 0.5), rgba(30, 41, 59, 0.35));
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .task-item:hover {
+            transform: translateY(-2px) scale(1.004);
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.45);
+        }
+        .task-text {
+            font-size: 0.98rem;
+        }
+        .task-done {
+            text-decoration: line-through;
+            color: #94a3b8;
+        }
+        .task-done-badge {
+            background: rgba(52, 211, 153, 0.2);
+            color: #bbf7d0;
+            border: 1px solid rgba(52, 211, 153, 0.6);
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.25);
+        }
+        .btn-complete {
+            background: linear-gradient(120deg, var(--secondary), var(--accent));
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 9px;
+            font-size: 0.9rem;
+            box-shadow: 0 0 14px rgba(167, 139, 250, 0.35);
+        }
+        .btn-complete:hover {
+            opacity: 0.95;
+        }
+        .empty-state {
+            margin: 8px 0 0;
+            color: #dbeafe;
+            border: 1px dashed rgba(255, 255, 255, 0.35);
+            border-radius: 12px;
+            padding: 18px;
+            text-align: center;
+            background: rgba(15, 23, 42, 0.3);
+        }
+        @keyframes float {
+            from {
+                transform: translateY(-6px) translateX(0);
+            }
+            to {
+                transform: translateY(10px) translateX(10px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="container">
+        <h1>Lista de Tarefas</h1>
+        <p class="subtitle">Modo surreal ativado: transforme caos em missões concluídas.</p>
+
+        <form class="add-form" action="/add" method="post">
+            <input type="text" name="task_text" placeholder="Digite uma tarefa" required>
+            <button class="btn-primary" type="submit">Adicionar</button>
+        </form>
+
+        {% if tasks %}
+        <ul class="task-list">
+            {% for task in tasks %}
+            <li class="task-item">
+                <span class="task-text {% if task.done %}task-done{% endif %}">
+                    #{{ task.id }} - {{ task.text }}
+                </span>
+                {% if not task.done %}
+                <form action="/complete/{{ task.id }}" method="post" style="margin: 0;">
+                    <button class="btn-complete" type="submit">Concluir</button>
+                </form>
+                {% else %}
+                <span class="task-done-badge">Concluida</span>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="empty-state">Nenhuma tarefa cadastrada ainda.</p>
+        {% endif %}
+    </main>
+</body>
+</html>
